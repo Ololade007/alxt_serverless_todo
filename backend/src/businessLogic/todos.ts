@@ -8,7 +8,7 @@ import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 
 import {UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 
-import { parseUserId } from '../auth/utils'
+
 
 const todoAccess = new TodoAccess()
 
@@ -18,19 +18,16 @@ export async function getAllTodos(userId : string): Promise<Todo[]> {
 
 export async function createTodo(
   createTodoRequest: CreateTodoRequest,
-  jwtToken: string
+  userId: string
 ): Promise<Todo> {
 
   const itemId = uuid.v4()
-  const userId = parseUserId(jwtToken)
-
   return await todoAccess.createTodo({
       todoId: itemId,
-      userId: userId,
-      name: createTodoRequest.name,
-      dueDate: createTodoRequest.dueDate,
+      userId,
       createdAt: new Date().toISOString(),
-      done: false
+      done: false,
+      ...createTodoRequest,
   })
 }
 

@@ -1,4 +1,4 @@
-import * as uuid from 'uuid'
+
 
 import { Todo  } from '../models/TodoItem'
 
@@ -9,8 +9,8 @@ import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import {UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 
 
-
-const todoAccess = new TodoAccess()
+const uuidv4 = require('uuid/v4');
+const todoAccess = new TodoAccess();
 
 export async function getAllTodos(userId : string): Promise<Todo[]> {
   return todoAccess.getAllTodos(userId)
@@ -21,12 +21,13 @@ export async function createTodo(
   userId: string
 ): Promise<Todo> {
 
-  const itemId = uuid.v4()
+  const itemId = uuidv4();
   return await todoAccess.createTodo({
       todoId: itemId,
       userId,
       createdAt: new Date().toISOString(),
       done: false,
+      attachmentUrl: '',
       ...createTodoRequest,
   })
 }

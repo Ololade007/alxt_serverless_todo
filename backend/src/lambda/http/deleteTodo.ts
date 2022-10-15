@@ -1,12 +1,13 @@
 import 'source-map-support/register'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+import * as middy from 'middy'
+import { cors, httpErrorHandler } from 'middy/middlewares'
 
 import { deleteTodo } from '../../businessLogic/todos'
 import { getUserId } from '../utils'
 
-export const handler : APIGatewayProxyHandler = 
+export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
     const userid = getUserId(event)
@@ -20,6 +21,12 @@ export const handler : APIGatewayProxyHandler =
       body: JSON.stringify({})
     }
   }
+)
 
-
-
+handler
+ .use(httpErrorHandler())
+ .use(
+     cors({
+       credentials: true
+  })
+)

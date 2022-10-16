@@ -17,7 +17,7 @@ export const handler : APIGatewayProxyHandler =
         'Access-Control-Allow-Credentials': true
       },
       body: JSON.stringify({
-        newItem
+        item : newItem
       })
     }
   }

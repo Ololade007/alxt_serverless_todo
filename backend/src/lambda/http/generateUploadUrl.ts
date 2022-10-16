@@ -19,7 +19,7 @@ export const handler : APIGatewayProxyHandler  =
 
     },
       body: JSON.stringify({
-        uploadUrl
+        item : uploadUrl
       })
     }
   }

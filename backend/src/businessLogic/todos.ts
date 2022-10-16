@@ -47,7 +47,7 @@ export async function updateTodo(
   ): Promise<void> {
 
     const userId = parseUserId(jwtToken);
-    await todoAccess.updateTodo(updateTodoRequest,todoId,userId)
+    await todoAccess.updateTodo(updateTodoRequest,userId,todoId)
   }
 
 

@@ -12,7 +12,7 @@ export const handler : APIGatewayProxyHandler =
     const todoId = event.pathParameters.todoId
     const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
     const jwtToken = getUserId(event)
-    const update = await updateTodo( todoId, jwtToken ,updatedTodo)
+    const update = await updateTodo(jwtToken, todoId, updatedTodo)
     return {
       statusCode: 204,
       headers: {

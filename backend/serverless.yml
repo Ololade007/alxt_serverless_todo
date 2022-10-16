@@ -106,7 +106,7 @@ functions:
           cors: true
           authorizer: Auth
           request :
-            schema:
+            schemas:
               application/json: ${file(models/update-todo-request.json)}
           reqValidatorName: RequestBodyValidator
     iamRoleStatements:

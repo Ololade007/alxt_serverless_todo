@@ -1,35 +1,26 @@
 import 'source-map-support/register'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import * as middy from 'middy'
-import { cors, httpErrorHandler } from 'middy/middlewares'
+import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 
 import { signedUrl } from '../../businessLogic/todos'
 import { getUserId } from '../utils'
 
-export const handler = middy(
+export const handler : APIGatewayProxyHandler  = 
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
-    const userId = getUserId(event)
-    const uploadUrl = await signedUrl(userId, todoId)
+    const token = getUserId(event)
+    const uploadUrl = await signedUrl(token, todoId)
 
     return {
       statusCode: 200,
       headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true
     },
       body: JSON.stringify({
         uploadUrl
       })
     }
   }
-)
 
-handler
-  .use(httpErrorHandler())
-  .use(
-    cors({
-      credentials: true
-    })
-  )
+
+

@@ -12,7 +12,8 @@ import { parseUserId } from '../auth/utils';
 const uuidv4 = require('uuid/v4');
 const todoAccess = new TodoAccess();
 
-export async function getAllTodos(userId : string): Promise<Todo[]> {
+export async function getAllTodos(jwtToken : string): Promise<Todo[]> {
+  const userId = parseUserId(jwtToken);
   return todoAccess.getAllTodos(userId)
 }
 
@@ -33,22 +34,26 @@ export async function createTodo(
   })
 }
 
-export async function signedUrl(userId: string, todoId: string): Promise<string> {
+export async function signedUrl(jwtToken: string, todoId: string): Promise<string> {
     const url = await todoAccess.getSignedUrl(todoId)
+    const userId = parseUserId(jwtToken);
     await todoAccess.updateUrl(userId, todoId)
   
     return url
   }
 
 export async function updateTodo(
-    userId: string,
+  jwtToken: string,
     todoId: string,
     updateTodoRequest : UpdateTodoRequest
   ): Promise<void> {
+
+    const userId = parseUserId(jwtToken);
     await todoAccess.updateTodo(updateTodoRequest,todoId,userId)
   }
 
 
-export async function deleteTodo (todoId: string, userId : string) : Promise<void> {
+export async function deleteTodo (todoId: string, jwtToken : string) : Promise<void> {
+    const userId = parseUserId(jwtToken);
     return await todoAccess.deleteTodo(todoId,userId)
 }

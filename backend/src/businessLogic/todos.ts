@@ -22,6 +22,7 @@ export async function createTodo(
   jwtToken: string
 ): Promise<Todo> {
 
+  const s3BucketName =  process.env.ATTACHMENT_BUCKET 
   const userId = parseUserId(jwtToken);
   const itemId = uuidv4();
   return await todoAccess.createTodo({
@@ -29,16 +30,13 @@ export async function createTodo(
       userId,
       createdAt: new Date().toISOString(),
       done: false,
-      attachmentUrl: '',
+      attachmentUrl: `https://${s3BucketName}.s3.amazonaws.com/${todoId}`,
       ...createTodoRequest,
   })
 }
 
-export async function signedUrl(jwtToken: string, todoId: string): Promise<string> {
-    const url = await todoAccess.getSignedUrl(todoId)
-    const userId = parseUserId(jwtToken);
-    await todoAccess.updateUrl(userId, todoId)
-  
+export async function signedUrl(todoId: string): Promise<string> {
+    const url = await todoAccess.getSignedUrl(todoId);
     return url
   }
 
@@ -53,7 +51,7 @@ export async function updateTodo(
   }
 
 
-export async function deleteTodo (todoId: string, jwtToken : string) : Promise<void> {
+export async function deleteTodo (todoId: string, jwtToken : string) : Promise<string> {
     const userId = parseUserId(jwtToken);
     return await todoAccess.deleteTodo(todoId,userId)
 }

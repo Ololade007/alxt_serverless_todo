@@ -10,14 +10,14 @@ export const handler : APIGatewayProxyHandler =
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
     const token = getUserId(event)
-    await deleteTodo (todoId, token)
+    const removeitem = await deleteTodo (todoId, token)
     return {
       statusCode: 204,
       headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
       },
-      body: JSON.stringify({})
+      body: JSON.stringify({item : removeitem})
     }
   }
 

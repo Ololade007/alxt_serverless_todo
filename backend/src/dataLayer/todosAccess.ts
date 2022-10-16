@@ -3,7 +3,9 @@ import * as AWS  from 'aws-sdk'
 
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 
-import {UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+import { TodoUpdate } from '../models/TodoUpdate';
+
+
 
 const AWSXRay = require('aws-xray-sdk')
 
@@ -36,10 +38,10 @@ export class TodoAccess {
     return items as Todo[]
   }
 
-  async getSignedUrl(bucketKey: string) : Promise<string> {
+  async getSignedUrl(todoId: string) : Promise<string> {
     return this.s3.getSignedUrl('putObject', {
       Bucket:this.bucketName,
-      key : bucketKey,
+      key : todoId,
       Expires : this.urlExpiration
     })
   }
@@ -53,7 +55,7 @@ export class TodoAccess {
     return Todo
   }
 
-  async deleteTodo(todoId: string, userId : string): Promise<void> {
+  async deleteTodo(todoId: string, userId : string): Promise<string> {
     const id = todoId
     const user = userId
     await this.docClient.delete({
@@ -63,37 +65,30 @@ export class TodoAccess {
         userId: user
       }
     }).promise()
+    return "" as string;
 }
-async updateTodo(updateTodoRequest: UpdateTodoRequest, userId: string, todoId: string): Promise<void> {
-  await this.docClient.update({
+async updateTodo(Todo: TodoUpdate , userId: string, todoId: string): Promise< TodoUpdate > {
+ const result = await this.docClient.update({
     TableName: this.ItemsTable,
     Key: {
       userId: userId,
       todoId: todoId
     },
-    UpdateExpression: "set #name=:name, dueDate=:dueDate, done=:done",
+    UpdateExpression: "set #name=:name, #dueDate=:dueDate, #done=:done",
     ExpressionAttributeValues:{
-        ":name": updateTodoRequest.name,
-        ":dueDate": updateTodoRequest.dueDate,
-        ":done": updateTodoRequest.done
+        ":name": Todo.name,
+        ":dueDate": Todo.dueDate,
+        ":done": Todo.done
     },
     ExpressionAttributeNames: {
-      "#name": "name"
-    }
-  }).promise()
-}
-async updateUrl(userId: string, todoId: string): Promise<void> {
-  await this.docClient.update({
-    TableName: this.ItemsTable,
-    Key: {
-      userId: userId,
-      todoId: todoId
+      "#name": "name",
+      "#dueDate" : "duedate",
+      "done" : "done"
     },
-    UpdateExpression: "set attachmentUrl=:attachmentUrl",
-    ExpressionAttributeValues:{
-        ":attachmentUrl": `https://${this.bucketName}.s3.amazonaws.com/${todoId}`
-    }
+    ReturnValues: "ALL_NEW"
   }).promise()
+  const attributes = result.Attributes
+  return attributes as TodoUpdate;
 }
 }
 

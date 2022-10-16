@@ -3,13 +3,13 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 
 import { signedUrl } from '../../businessLogic/todos'
-import { getUserId } from '../utils'
+
 
 export const handler : APIGatewayProxyHandler  = 
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
-    const token = getUserId(event)
-    const uploadUrl = await signedUrl(token, todoId)
+   
+    const uploadUrl = await signedUrl( todoId)
 
     return {
       statusCode: 200,

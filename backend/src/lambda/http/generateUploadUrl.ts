@@ -7,17 +7,15 @@ import { signedUrl } from '../../businessLogic/todos'
 
 export const handler : APIGatewayProxyHandler  = 
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const todoId = event.pathParameters.todoId
-   
-    const uploadUrl = await signedUrl( todoId)
+    const todoId = event.pathParameters.todoId;
+    const uploadUrl = await signedUrl(todoId);
 
     return {
-      statusCode: 200,
+      statusCode: 202,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true
-
-    },
+        'Access-Control-Allow-Origin':'*',
+        'Access-Control-Allow-Credentials': true,
+       },
       body: JSON.stringify({
         item : uploadUrl
       })

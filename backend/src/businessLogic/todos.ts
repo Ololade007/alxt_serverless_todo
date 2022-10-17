@@ -35,11 +35,9 @@ export async function createTodo(
   })
 }
 
-export async function generateSignedUrl(todoId: string): Promise<string> {
-    const url = await todoAccess.generateSignedUrl(todoId);
-    return url
+export async function generateUploadUrl(todoId: string): Promise<string> {
+  return todoAccess.generateUploadUrl(todoId);
   }
-
 export async function updateTodo(
   jwtToken: string,
     todoId: string,

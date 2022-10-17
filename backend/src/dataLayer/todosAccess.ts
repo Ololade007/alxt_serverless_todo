@@ -18,8 +18,8 @@ export class TodoAccess {
  constructor(
     private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
     private readonly ItemsTable = process.env.TODOS_TABLE,
-    private readonly s3: Types = new XAWS.S3({ signatureVersion: 'v4' }),
-    private readonly bucketName = process.env.ATTACHMENT_BUCKET 
+    private readonly s3Client: Types = new XAWS.S3({ signatureVersion: 'v4' }),
+    private readonly s3BucketName = process.env.ATTACHMENT_BUCKET 
     ) {
   }
 
@@ -37,13 +37,18 @@ export class TodoAccess {
     return items as Todo[]
   }
 
-  async generateSignedUrl(todoId: string) : Promise<string> {
-    return this.s3.getSignedUrl('putObject', {
-      Bucket: this.bucketName,
-      key : todoId,
-      Expires : 1000
+  async generateUploadUrl(todoId: string): Promise<string> {
+    console.log("Generating URL");
+
+    const url = this.s3Client.getSignedUrl('putObject', {
+        Bucket: this.s3BucketName,
+        Key: todoId,
+        Expires: 1000,
     })
-  }
+    console.log(url);
+
+    return url as string;
+}
 
   async createTodo(Todo: Todo): Promise<Todo> {
    await this.docClient.put({

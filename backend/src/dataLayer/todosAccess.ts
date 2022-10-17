@@ -37,7 +37,7 @@ export class TodoAccess {
     return items as Todo[]
   }
 
-  async getSignedUrl(todoId: string) : Promise<string> {
+  async generateSignedUrl(todoId: string) : Promise<string> {
     return this.s3.getSignedUrl('putObject', {
       Bucket: this.bucketName,
       key : todoId,

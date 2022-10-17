@@ -35,8 +35,8 @@ export async function createTodo(
   })
 }
 
-export async function signedUrl(todoId: string): Promise<string> {
-    const url = await todoAccess.getSignedUrl(todoId);
+export async function generateSignedUrl(todoId: string): Promise<string> {
+    const url = await todoAccess.generateSignedUrl(todoId);
     return url
   }
 

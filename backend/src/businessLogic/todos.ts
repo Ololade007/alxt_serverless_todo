@@ -20,9 +20,7 @@ export async function getAllTodos(jwtToken : string): Promise<Todo[]> {
 export async function createTodo(
   createTodoRequest: CreateTodoRequest,
   jwtToken: string
-): Promise<Todo> {
-
-  const s3BucketName =  process.env.ATTACHMENT_S3_BUCKET  
+): Promise<Todo> { 
   const userId = parseUserId(jwtToken);
   const itemId = uuidv4();
   return await todoAccess.createTodo({
@@ -30,7 +28,6 @@ export async function createTodo(
       userId,
       createdAt: new Date().toISOString(),
       done: false,
-      attachmentUrl: `https://${s3BucketName}.s3.amazonaws.com/${itemId}`,
       ...createTodoRequest,
   })
 }

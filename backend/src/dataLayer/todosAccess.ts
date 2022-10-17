@@ -19,7 +19,7 @@ export class TodoAccess {
     private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
     private readonly ItemsTable = process.env.TODOS_TABLE,
     private readonly s3Client: Types = new XAWS.S3({ signatureVersion: 'v4' }),
-    private readonly s3BucketName = process.env.ATTACHMENT_BUCKET 
+    private readonly s3BucketName = process.env.ATTACHMENT_S3_BUCKET 
     ) {
   }
 

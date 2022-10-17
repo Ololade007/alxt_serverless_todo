@@ -22,7 +22,7 @@ export async function createTodo(
   jwtToken: string
 ): Promise<Todo> {
 
-  const s3BucketName =  process.env.ATTACHMENT_BUCKET 
+  const s3BucketName =  process.env.ATTACHMENT_S3_BUCKET  
   const userId = parseUserId(jwtToken);
   const itemId = uuidv4();
   return await todoAccess.createTodo({

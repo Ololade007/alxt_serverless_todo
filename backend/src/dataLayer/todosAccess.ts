@@ -18,8 +18,8 @@ export class TodoAccess {
  constructor(
     private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
     private readonly ItemsTable = process.env.TODOS_TABLE,
-    private readonly s3Client: Types = new XAWS.S3({ signatureVersion: 'v4' }),
-    private readonly s3BucketName = process.env.ATTACHMENT_S3_BUCKET 
+    private readonly s3: Types = new XAWS.S3({ signatureVersion: 'v4' }),
+    private readonly bucketName = process.env.ATTACHMENT_S3_BUCKET 
     ) {
   }
 
@@ -38,14 +38,12 @@ export class TodoAccess {
   }
 
   async generateUploadUrl(todoId: string): Promise<string> {
-    console.log("Generating URL");
-
-    const url = this.s3Client.getSignedUrl('putObject', {
-        Bucket: this.s3BucketName,
+  const url = this.s3.getSignedUrl('putObject', {
+        Bucket: this.bucketName,
         Key: todoId,
         Expires: 1000,
     })
-    console.log(url);
+
 
     return url as string;
 }
@@ -94,6 +92,23 @@ async updateTodo(Todo: TodoUpdate , userId: string, todoId: string): Promise< To
   const attributes = result.Attributes
   return attributes as TodoUpdate;
 }
+
+async updateUrl(userId: string, todoId: string): Promise<void> {
+   await this.docClient.update({
+     TableName: this.ItemsTable,
+     Key: {
+       userId: userId,
+       todoId: todoId
+     },
+     UpdateExpression: "set #attachment= :attachment",
+     ExpressionAttributeValues:{
+         ":attachment": `https://${this.bucketName}.s3.amazonaws.com/${todoId}`
+     },
+     ExpressionAttributeNames: {
+       "#attachment":"attachmentUrl"
+    }
+   }).promise()
+ }
 }
 
 

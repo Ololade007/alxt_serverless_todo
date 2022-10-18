@@ -45,6 +45,15 @@ export async function updateTodo(
     await todoAccess.updateTodo(updateTodoRequest,userId,todoId)
   }
 
+export async function updateTodoUrl( 
+  jwtToken: string,
+  todoId: string
+) : Promise<void> {
+  
+  const userId = parseUserId(jwtToken);
+  await todoAccess.updateUrl(userId,todoId)
+}
+
 
 export async function deleteTodo (todoId: string, jwtToken : string) : Promise<string> {
     const userId = parseUserId(jwtToken);
